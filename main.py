@@ -4,6 +4,7 @@ import csv
 import psycopg2
 
 conn = psycopg2.connect(database="yutfut",
+                        # host="109.120.182.154",
                         host="127.0.0.1",
                         user="yutfut",
                         password="yutfut",
