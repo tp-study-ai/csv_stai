@@ -9,7 +9,6 @@ conn = psycopg2.connect(database="yutfut",
                         password="yutfut",
                         port="5432")
 
-csv.field_size_limit(sys.maxsize)
 cursor = conn.cursor()
 
 
@@ -70,6 +69,7 @@ def print_hi(a):
 
 data = []
 
+csv.field_size_limit(sys.maxsize)
 with open('new_file3.csv') as f:
     reader = csv.reader(f)
     for row in reader:
@@ -78,6 +78,8 @@ with open('new_file3.csv') as f:
                 row[1],
                 row[2],
                 row[3],
+                row[4],
+                row[5],
                 row[6],
                 row[7],
                 row[8],
@@ -102,9 +104,9 @@ for item in data:
     # if len(item[2]) == 0:
     #     item[2] == ""
     cursor.execute(
-    '''INSERT INTO task (name, description, public_tests, difficulty, cf_contest_id, cf_index, cf_points, cf_rating, cf_tags, time_limit, memory_limit_bytes, link, task_ru, input, output, note) VALUES(E'{0}', E'{1}', ARRAY{2}, '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', E'{12}', E'{13}', E'{14}', E'{15}');'''.format(
-        item[0].replace("'", r"\'"), item[1].replace('\\', r"\\").replace("'", r"\'"), print_hi(item[2]), item[3], item[4], item[5],
-        item[6], item[7], str(item[8].replace("'", "")), item[9], item[10], item[11], item[12].replace('\\', r"\\").replace("'", r"\'"), item[13].replace('\\', r"\\").replace("'", r"\'"), item[14].replace('\\', r"\\").replace("'", r"\'"), item[15].replace('\\', r"\\").replace("'", r"\'")))
+    '''INSERT INTO task (name, description, public_tests, difficulty, cf_contest_id, cf_index, cf_points, cf_rating, cf_tags, time_limit, memory_limit_bytes, link, task_ru, input, output, note) VALUES (E'{0}', E'{1}', ARRAY{2}, ARRAY'{3}', ARRAY'{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', E'{14}', E'{15}', E'{16}', E'{17}'),\n'''.format(
+        item[0].replace("'", r"\'"), item[1].replace('\\', r"\\").replace("'", r"\'"), print_hi(item[2]), print_hi(item[3]), print_hi(item[4]), item[5], item[6], item[7],
+        item[8], item[9], str(item[10].replace("'", "")), item[11], item[12], item[13], item[14].replace('\\', r"\\").replace("'", r"\'"), item[15].replace('\\', r"\\").replace("'", r"\'"), item[16].replace('\\', r"\\").replace("'", r"\'"), item[17].replace('\\', r"\\").replace("'", r"\'")))
     conn.commit()
 
 # [intput: "example" output: "example", intput: "example" output: "example"]
@@ -113,52 +115,11 @@ for item in data:
 # f = open('init_db/init.sql', 'w')
 # for item in data:
 #     f.write(
-#         f'("{item[0]}", "{item[1]}", ARRAY"{print_hi(item[2])}", "{item[3]}", "{item[4]}", "{item[5]}", "{item[6]}", "{item[7]}", "{item[8]}", "{item[9]}", "{item[10]}", "{item[11]}"),\n')
-
-# SET timezone TO '+03';
-#
-# create table task
-# (
-#     id integer,
-#     name text,
-#     description text,
-#     public_tests text[],
-#     difficulty text,
-#     cf_contest_id text,
-#     cf_index text,
-#     cf_points text,
-#     cf_rating text,
-#     cf_tags text,
-#     time_limit text,
-#     memory_limit_bytes text,
-#     link text
-# );
-#
-# INSERT INTO task (name, description, public_tests, difficulty, cf_contest_id, cf_index, cf_points, cf_rating, cf_tags, time_limit, memory_limit_bytes, link) VALUES
-
-
-# DROP TABLE IF EXISTS task CASCADE;
-#
-# SET timezone TO '+03';
-#
-# create table task
-# (
-#     id integer,
-#     name string,
-#     description string,
-#     public_tests string,
-#     private_tests string,
-#     generated_tests string,
-#     difficulty string,
-#     cf_contest_id string,
-#     cf_index string,
-#     cf_points string,
-#     cf_rating string,
-#     cf_tags string,
-#     time_limit string,
-#     memory_limit_bytes string,
-#     link string
-# );
+#         '''(E'{0}', E'{1}', ARRAY{2}, ARRAY'{3}', ARRAY'{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', E'{14}', E'{15}', E'{16}', E'{17}'),\n'''.format(
+#         item[0].replace("'", r"\'"), item[1].replace('\\', r"\\").replace("'", r"\'"), print_hi(item[2]), print_hi(item[3]), print_hi(item[4]), item[5], item[6], item[7],
+#         item[8], item[9], str(item[10].replace("'", "")), item[11], item[12], item[13], item[14].replace('\\', r"\\").replace("'", r"\'"), item[15].replace('\\', r"\\").replace("'", r"\'"), item[16].replace('\\', r"\\").replace("'", r"\'"), item[17].replace('\\', r"\\").replace("'", r"\'")
+#         )
+#     )
 
 # SET timezone TO '+03';
 #
@@ -176,10 +137,9 @@ for item in data:
 #     cf_tags text,
 #     time_limit text,
 #     memory_limit_bytes text,
-#     link text
+#     link text,
+#     task_ru text,
+#     input text,
+#     output text,
+#     note text
 # );
-
-    # task_ru text,
-    # input text,
-    # output text,
-    # note text
