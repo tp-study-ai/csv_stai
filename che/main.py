@@ -158,15 +158,23 @@ cursor = conn.cursor()
 #             # print(output_case)
 #             continue
 
+class MyString(str):
+    def __init__(self, my_object: str):
+        self.value = my_object
+
+    def __repr__(self):
+        return '$study_ai_tag$' + self.value + '$study_ai_tag$'
+
+
 def parse_tests(text):
     text = text[1:len(text) - 1]
     che = []
     while (True):
-        input = text[0:5]  # отрезали input
+        input = text[0:5]  # отрезали input 'input'
         # che.append(input)  # положили input в лист
         text = text[8:]  # убрали input
         pos = text.find('output: "')
-        input_case = text[:pos-2].replace('\\', r"\\").replace("'", r"\'")
+        input_case = text[:pos-2].replace('\\n', "\n")  # .replace("'", r"\'")
 
         # che.append(input_case)
 
@@ -178,27 +186,27 @@ def parse_tests(text):
         pos = text.find('input: "')
         if pos == -1:
             pos = text.find('"')
-            output_case = text[:pos].replace('\\', r"\\").replace("'", r"\'"),
+            output_case = text[:pos].replace('\\n', "\n")
 
-            if input_case.find("'") == -1 and output_case.find("'") == -1:
-                che.append(input)
-                che.append(input_case)
-                che.append(output)
-                che.append(output_case)
-            # che.append(input)
-            # che.append(input_case)
-            # che.append(output)
-            # che.append(output_case)
+            # if input_case.find("'") == -1 and output_case.find("'") == -1:
+            #     che.append(input)
+            #     che.append(input_case)
+            #     che.append(output)
+            #     che.append(output_case)
+            che.append(MyString(input))
+            che.append(MyString(input_case))
+            che.append(MyString(output))
+            che.append(MyString(output_case))
             if len(che) == 0:
                 return ["NULL"]
             return che
-        output_case = text[:pos-4].replace('\\', r"\\").replace("'", r"\'"),
+        output_case = text[:pos-4].replace('\\n', "\n")
 
         text = text[pos:]
-        che.append(input)
-        che.append(input_case)
-        che.append(output)
-        che.append(output_case)
+        che.append(MyString(input))
+        che.append(MyString(input_case))
+        che.append(MyString(output))
+        che.append(MyString(output_case))
 
         # if input_case.find("'") == -1 and output_case.find("'") == -1:
         #     che.append(input)
@@ -214,6 +222,9 @@ data = []
 
 
 csv.field_size_limit(sys.maxsize)
+#
+i = 0
+
 with open('new_file3.csv') as f:
     reader = csv.reader(f)
     for row in reader:
@@ -246,8 +257,11 @@ with open('new_file3.csv') as f:
                 row[18]  # note
             ]
         )
-        # if i == 50:
-        #     break
+
+        if i == 50:
+            break
+
+        i += 1
 
 print("first")
 
@@ -266,9 +280,7 @@ for item in data:
     # print(item[4])
     # print(parse_tests(item[4]))
     # print("---------------------------------")
-
-    cursor.execute(
-        '''INSERT INTO tasks (
+    sql_item = '''INSERT INTO tasks (
         name,
         description,
         public_tests,
@@ -325,7 +337,69 @@ for item in data:
             item[14].replace('\\', r"\\").replace("'", r"\'"),
             item[15].replace('\\', r"\\").replace("'", r"\'"),
             item[16].replace('\\', r"\\").replace("'", r"\'"),
-            item[17].replace('\\', r"\\").replace("'", r"\'")))
+            item[17].replace('\\', r"\\").replace("'", r"\'"))
+
+    print(sql_item)
+
+    cursor.execute(sql_item)
+        # '''INSERT INTO tasks (
+        # name,
+        # description,
+        # public_tests,
+        # private_tests,
+        # generated_tests,
+        # difficulty,
+        # cf_contest_id,
+        # cf_index,
+        # cf_points,
+        # cf_rating,
+        # cf_tags,
+        # time_limit,
+        # memory_limit_bytes,
+        # link,
+        # task_ru,
+        # input,
+        # output,
+        # note
+        # ) VALUES (
+        # E'{0}',
+        # E'{1}',
+        # ARRAY{2},
+        # ARRAY{3},
+        # ARRAY{4},
+        # '{5}',
+        # {6},
+        # '{7}',
+        # '{8}',
+        # '{9}',
+        # ARRAY{10},
+        # '{11}',
+        # '{12}',
+        # '{13}',
+        # E'{14}',
+        # E'{15}',
+        # E'{16}',
+        # E'{17}'
+        # );'''.format(
+        #     item[0].replace("'", r"\'"),
+        #     item[1].replace('\\', r"\\").replace("'", r"\'"),
+        #     parse_tests(item[2]),
+        #     parse_tests(item[3]),
+        #     parse_tests(item[4]),
+        #     item[5],
+        #     item[6],
+        #     item[7],
+        #     item[8],
+        #     item[9],
+        #     item[10],
+        #     # str(item[10].replace("'", "")),
+        #     item[11],
+        #     item[12],
+        #     item[13],
+        #     item[14].replace('\\', r"\\").replace("'", r"\'"),
+        #     item[15].replace('\\', r"\\").replace("'", r"\'"),
+        #     item[16].replace('\\', r"\\").replace("'", r"\'"),
+        #     item[17].replace('\\', r"\\").replace("'", r"\'")))
     conn.commit()
 
 print("end!")
