@@ -192,7 +192,11 @@ def parse_timeout(text):
     return 1
 
 
-with open('new_file3.csv') as f:
+def parse_url(a, b):
+    return "/contest/" + str(a) + "/problem/" + str(b)
+
+
+with open('../new_file31.csv') as f:
     reader = csv.reader(f)
     for row in reader:
         data.append(
@@ -211,10 +215,11 @@ with open('new_file3.csv') as f:
                 row[12],  # time_limit
                 row[13],  # memory_limit_bytes
                 row[14],  # link
-                row[15],  # task_ru
-                row[16],  # input
-                row[17],  # output
-                row[18]  # note
+                row[15],  # name_ru
+                row[16],  # task_ru
+                row[17],  # input
+                row[18],  # output
+                row[19],  # note
             ]
         )
 
@@ -237,6 +242,8 @@ for item in data:
         time_limit,
         memory_limit_bytes,
         link,
+        short_link,
+        name_ru,
         task_ru,
         input,
         output,
@@ -256,10 +263,12 @@ for item in data:
         '{11}',
         '{12}',
         '{13}',
-        E'{14}',
+        '{14}',
         E'{15}',
         E'{16}',
-        E'{17}'
+        E'{17}',
+        E'{18}',
+        E'{19}'
         );'''.format(
             item[0].replace("'", r"\'"),
             item[1].replace('\\', r"\\").replace("'", r"\'"),
@@ -275,8 +284,10 @@ for item in data:
             parse_timeout(item[11]),
             item[12],
             item[13],
+            parse_url(item[6], item[7]),
             item[14].replace('\\', r"\\").replace("'", r"\'"),
             item[15].replace('\\', r"\\").replace("'", r"\'"),
             item[16].replace('\\', r"\\").replace("'", r"\'"),
-            item[17].replace('\\', r"\\").replace("'", r"\'")))
+            item[17].replace('\\', r"\\").replace("'", r"\'"),
+            item[18].replace('\\', r"\\").replace("'", r"\'")))
     conn.commit()

@@ -1,29 +1,7 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS tasks CASCADE;
 DROP TABLE IF EXISTS send_task CASCADE;
-
-SET timezone TO '+03';
-
-CREATE OR REPLACE FUNCTION get_ru_date(date TIMESTAMP) RETURNS VARCHAR(30) AS $$
-DECLARE
-    month_str VARCHAR(30);
-    BEGIN
-        month_str = CASE to_char(date, 'MM') WHEN '01' THEN ' января '
-                        WHEN '02' THEN ' февраля '
-                        WHEN '03' THEN ' марта '
-                        WHEN '04' THEN ' апреля '
-                        WHEN '05' THEN ' мая '
-                        WHEN '06' THEN ' июня '
-                        WHEN '07' THEN ' июля '
-                        WHEN '08' THEN ' августа '
-                        WHEN '09' THEN ' сентября '
-                        WHEN '10' THEN ' октября '
-                        WHEN '11' THEN ' ноября '
-                        WHEN '12' THEN ' декабря '
-                    END;
-        RETURN to_char(date, 'DD')|| month_str || to_char(date, 'YYYY, HH24:MI');
-    END;
-$$ LANGUAGE plpgsql;
+DROP TABLE IF EXISTS likes CASCADE;
 
 create table tasks
 (
@@ -42,6 +20,8 @@ create table tasks
     time_limit float,
     memory_limit_bytes integer,
     link VARCHAR(256),
+    short_link VARCHAR(256),
+    name_ru text,
     task_ru text,
     input text,
     output text,
@@ -66,5 +46,18 @@ CREATE TABLE send_task (
     tests_total integer,
     lint_success bool,
     code_text text,
-    date TIMESTAMP DEFAULT now() NOT NULL
+    date TIMESTAMP DEFAULT now() + interval '3 hours' NOT NULL
+);
+
+CREATE TABLE likes (
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id integer NOT NULL,
+    task_id integer NOT NULL
+);
+
+CREATE TABLE difficulty_task (
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id integer NOT NULL,
+    task_id integer NOT NULL,
+    difficulty integer NOT NULL
 );
